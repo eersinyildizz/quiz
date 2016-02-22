@@ -1,0 +1,28 @@
+
+body {
+    margin-top: 50px; /* Required margin for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+   background: url("http://www3.vidizmo.com/wp-content/uploads/2015/11/city-light-blur-wallpaper-background-2709-2855-hd-wallpapers-1.jpg")  no-repeat center center fixed;;
+   -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+  
+}
+.jumbotron h1, p{
+
+	text-align: center;
+	color: white;
+}
+.jumbotron{
+	background-color: rgba(192,192,192,0.3);
+}
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    
+}
+a:hover {
+    color: white;
+}
