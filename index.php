@@ -1,94 +1,117 @@
-<?php 
-	include "inc/header.php";
- ?>	
-	<h1>Quiz sistemine hoşgeldiniz</h1>
-	<p>Kendi quizini oluştur veya quizler ile kendini dene :)</p><br><br>
- 	<center><button type="button" class="btn btn-primary  btn-lg" data-toggle="modal" data-target="#myModal_giris">Giriş Yap</button>
- 	<button type="button" class="btn btn-success  btn-lg" data-toggle="modal" data-target="#myModal_kayit">Kayıt Ol</button><br>
-	<br><a href="https://www.facebook.com/profile.php?id=704994483"><i class="fa fa-facebook fa-3x"></i></a>&nbsp&nbsp&nbsp&nbsp
- 	<a href="https://twitter.com/eersinyildiz"><i class="fa fa-twitter fa-3x"></i></a>&nbsp&nbsp&nbsp&nbsp
- 	<a href="https://github.com/eersinyildizz/"><i class="fa fa-github fa-3x"></i></a>&nbsp&nbsp&nbsp&nbsp
- 	<a href="https://www.linkedin.com/in/ersin-y%C4%B1ld%C4%B1z-697ab5b0?trk=nav_responsive_tab_profile"><i class="fa fa-linkedin fa-3x"></i></a>
- 	</center>
- 	
+<?php /*
+	/* Here , there is a sSign up cotrol system*/
+	if (isset($_POST["add"])) {
+		$name = $_POST["name"];
+		$email = $_POST["email"];
+		$password = md5($_POST["password"]);
+		if (isset($name) && isset($email) && isset($password)) {
+			try{
+				$pdo = new PDO("mysql:host=localhost;dbname=quiz;charset=utf8","root","");
+				$add = $pdo->exec("INSERT INTO user(name,email,password) VALUES ('$name','$email','$password')");
+				if (empty($add)) {
+					echo "<script>alert('There is user that have same email address. Please try to join another email address.');</script>";
+				}
+			}catch(PDOException $e){
+				die("Uppps. There is a connection problems. : ".$e->getMessage());
+			}
+		}
+	}
+	/* here , there is log in control system*/
+	if (isset($_POST["control"])) {
+		$c_email = $_POST["c_email"];
+		$c_password = md5($_POST["c_password"]);
+		if (isset($c_email) && isset($c_password)) {
+			try{
+				$c_pdo = new PDO("mysql:host=localhost;dbname=quiz;charset=utf8","root","");
+				$controll = $c_pdo->query("SELECT * FROM user WHERE email='$c_email' AND password='$c_password'");
+				$result = $controll->fetch(PDO::FETCH_LAZY);
+				if ($result) {
+					session_start();
+					$_SESSION["id"] = $result->id;
+					$_SESSION["name"] = $result->name;
+					$_SESSION["email"] = $result->email;
+					$_SESSION["password"] = $result->password;
+					
+					header("Location:main.php");
+					
+				}else{
+					echo "<script>alert('There is not a account. Please create a account.');</script>";
+				}
 
-		
-
-		<!-- Modal -->
-		<div id="myModal_giris" class="modal fade" role="dialog">
-		  <div class="modal-dialog">
-
-		    <!-- Modal content-->
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <button type="button" class="close" data-dismiss="modal">&times;</button>
-		        <h4 class="modal-title">Giriş Yap</h4>
-		      </div>
-		  	<form action="" method="post">
-			<div class="modal-body">
-		        		<div class="form-group">
-						  <label for="email">Email Adresiniz:</label>
-						  <input type="email" class="form-control" id="usr" name="email" required>
-						  <label for="password">Parolanız:</label>
-						  <input type="password" class="form-control" id="usr" name="password" required>
-						</div>
-		        	
-		      </div>
-		      <div class="modal-footer">
-		        <button type="submit" class="btn btn-primary" name="giris">Giriş Yap</button>
-		        <button type="button" class="btn btn-danger" data-dismiss="modal">İptal</button>
-		      </div>
-		</form>
-		      
-		    </div>
-
-		  </div>
+			}catch(PDOException $e){
+				die("Uppps. There is a connection problems. : ".$e->getMessage());
+			}
+		}
+	}
+ ?>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Quiz System</title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+<!-- This our navbar topic-->
+	<nav class="navbar  navbar-inverse">
+	  <div class="container">
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="index.php">My Quiz</a>
+	    </div>
+	 	<form class="navbar-form navbar-right" method="post" action="">
+	 		<input type="email" placeholder="Email" class="form-control" name="c_email" required>
+	 		<input type="password" placeholder="Password" class="form-control" name="c_password" required>
+	 		<input type="submit" value="Sign In" name="control" class="btn btn-success">
+	 	</form>
+	  </div>
+	</nav>
+	<!-- welcome screen when person enter the site tha see it -->
+	<div class="container">
+		<div class="jumbotron">
+			<h1 style="text-align: center;">Welcome to My Quiz </h1>
 		</div>
-
-		
-
-		<!-- Modal -->
-		<div id="myModal_kayit" class="modal fade" role="dialog">
-		  <div class="modal-dialog">
-
-		    <!-- Modal content-->
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <button type="button" class="close" data-dismiss="modal">&times;</button>
-		        <h4 class="modal-title">Kayıt Ol</h4>
-		      </div>
-		     			   <form action="" method="post"> 
-		      <div class="modal-body">
-		
-		        	<div class="form-group">
-					  <label for="usr">Adınız:</label>
-					  <input type="text" class="form-control" id="usr" name="name_kayit" required>
-					  <label for="usr">E-mail Adresiniz:</label>
-					  <input type="email" class="form-control" id="usr" name="email_kayit" required>
-					  <label for="usr">Parolanız:</label>
-					  <input type="password" class="form-control" id="usr" name="password_kayit" required>
-					  <label for="usr">Sınıfınız:</label>
-					  	<div >
-					  		<label class="radio-inline" ><input type="radio" name="class_kayit" value="hazırlık" required>Hazırlık</label>
-							<label class="radio-inline"><input type="radio" name="class_kayit" value="1" required>1. Sınıf</label>
-							<label class="radio-inline"><input type="radio" name="class_kayit" value="2" required>2. Sınıf</label>
-							<label class="radio-inline"><input type="radio" name="class_kayit" value="3" required>3. Sınıf</label>
-							<label class="radio-inline"><input type="radio" name="class_kayit" value="4" required>4. Sınıf</label><br><hr>
-							<label class="radio-inline" style="color:blue;"><input type="radio" name="class_kayit" value="hoca" required>Hoca</label>
-
-					  	</div>
-					</div>
-				
-		      </div>
-		      <div class="modal-footer">
-		     	<button type="submit" name="kayit" class="btn btn-primary">Kayıt Ol</button>
-		        <button type="button" class="btn btn-danger" data-dismiss="modal">İptal</button>
-		      </div>
-		</form>
-		    </div>
-
-		  </div>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-5">
+				<div class="jumbotron">
+				<form action="" method="post">
+					<div class="form-group">
+					    <label>Name :</label>
+					    <input type="text" class="form-control" name="name" required>
+					 </div>
+					 <div class="form-group">
+					    <label>Email address:</label>
+					    <input type="email" class="form-control" name="email" required>
+					 </div>
+					 <div class="form-group">
+					    <label>Password:</label>
+					    <input type="password" class="form-control" name="password" required>
+					  </div>
+					 <input type="submit" value="Sign Up" name="add" class="btn btn-primary btn-block"></input>
+				</form>
+				</div>
+			</div>
+			<div class="col-md-7">
+				<div class="jumbotron"><h3>
+					<ul class="list-unstyled">
+						<li><span class="fa fa-check text-success"></span>  Simple User Interface</li>
+						<li><span class="fa fa-check text-success"></span>  Test Yourself</li>
+						<li><span class="fa fa-check text-success"></span>  Test Other People</li>
+					</ul></h3>
+				</div>
+			</div>
 		</div>
+	</div>
 
-  </a>
- <?php include "inc/footer.php"; ?>""
+
+
+
+	<script src="js/jquery.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+</body>
+</html>
+
